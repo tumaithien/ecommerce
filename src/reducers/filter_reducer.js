@@ -59,10 +59,58 @@ const filter_reducer = (state, action) => {
     return { ...state, filters: { ...state.filters, [name]: value } };
   }
   if (action.type === FILTER_PRODUCTS) {
-    console.log("filtering");
-    return { ...state };
+    const { all_products } = state;
+    const { text, company, category, color, price, shipping } = state.filters;
+    let tempProducts = [...all_products];
+    //filtering
+    //text
+    if (text) {
+      tempProducts = tempProducts.filter((product) => {
+        return product.name.toLowerCase().startsWith(text);
+      });
+    }
+    //category
+    if (category !== "all") {
+      tempProducts = tempProducts.filter((product) => {
+        return product.category === category;
+      });
+    }
+    //company
+    if (company !== "all") {
+      tempProducts = tempProducts.filter((product) => {
+        return product.company === company;
+      });
+    }
+    //color
+    if (color !== "all") {
+      tempProducts = tempProducts.filter((product) => {
+        return product.colors.find((c) => c === color);
+      });
+    }
+    //price
+    tempProducts = tempProducts.filter((product) => product.price <= price);
+    //shipping
+    if (shipping) {
+      tempProducts = tempProducts.filter((product) => {
+        return product.shipping === true;
+      });
+    }
+    return { ...state, filtered_products: tempProducts };
   }
-  return state;
+  if (action.type === CLEAR_FILTERS) {
+    return {
+      ...state,
+      filters: {
+        ...state.filters,
+        text: "",
+        company: "all",
+        category: "all",
+        color: "all",
+        price: state.filters.max_price,
+        shipping: false,
+      },
+    };
+  }
   throw new Error(`No Matching "${action.type}" - action type`);
 };
 

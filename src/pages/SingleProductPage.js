@@ -32,6 +32,9 @@ const SingleProductPage = () => {
       setTimeout(() => {
         history.push("/");
       }, 3000);
+      return () => {
+        clearTimeout();
+      };
     }
   }, [error]);
   if (loading) {
